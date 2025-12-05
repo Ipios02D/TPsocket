@@ -6,7 +6,8 @@ import java.net.Socket;
 
 public class Procedurecom extends Thread  {
     final Socket comm;
-    private String pseudo;
+    public String pseudo;
+    public String messageRecu;
 
     public Procedurecom (Socket s) {
         this.comm = s;
@@ -27,8 +28,11 @@ public class Procedurecom extends Thread  {
     public String recevoirMessage() throws IOException {
             BufferedReader in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
             String message = in.readLine();
+            Serveur.messageAttente = true;
             return message;
     }
+
+
     @Override
     public void run() {
         try (comm;) {
@@ -36,7 +40,7 @@ public class Procedurecom extends Thread  {
             this.pseudo = recevoirPseudo();
             System.out.println("Pseudo: " + pseudo);
             while (true) {
-                String messageRecu = recevoirMessage();
+                messageRecu = recevoirMessage();
                 if (messageRecu.equals("!exit")) {
                     System.out.println("Client " + pseudo + " deconnecte.");
                     break;
