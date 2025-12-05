@@ -18,7 +18,13 @@ public class Procedurecom extends Thread  {
             return "Message envoyé";
     }
 
-    public String recevoir() throws IOException {
+    public String recevoirPseudo() throws IOException {
+            BufferedReader in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
+            String message = in.readLine();
+            return message;
+    }
+
+    public String recevoirMessage() throws IOException {
             BufferedReader in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
             String message = in.readLine();
             return message;
@@ -27,11 +33,10 @@ public class Procedurecom extends Thread  {
     public void run() {
         try (comm;) {
             System.out.println("Communication avec le client " + comm.getInetAddress());
-            String messageRecu = recevoir();
-            this.pseudo = messageRecu;
-            System.out.println("Pseudo: " + messageRecu);
+            this.pseudo = recevoirPseudo();
+            System.out.println("Pseudo: " + pseudo);
             while (true) {
-                messageRecu = recevoir();
+                String messageRecu = recevoirMessage();
                 if (messageRecu.equals("!exit")) {
                     System.out.println("Client " + pseudo + " deconnecte.");
                     break;

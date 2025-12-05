@@ -3,6 +3,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Serveur{
+    static  Procedurecom[] procedures = new Procedurecom[20];
+    private static int nbclient = 0;
 
     public void partager(Procedurecom[] procedures, String message, String pseudoExpediteur) {
         for (Procedurecom procedure : procedures) {
@@ -20,7 +22,9 @@ public class Serveur{
                 Socket comm = conn.accept();
                 System.out.println("Client connecte : " + comm.getInetAddress());
                 Procedurecom procedure = new Procedurecom(comm);
+                procedures[nbclient] = procedure;
                 procedure.start();
+                nbclient++;
             }
         } catch (IOException e) {
             System.out.println("Erreur serveur : " + e.getMessage());
