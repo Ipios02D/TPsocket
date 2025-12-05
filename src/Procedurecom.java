@@ -21,6 +21,25 @@ public class Procedurecom extends Thread  {
     public String recevoirPseudo() throws IOException {
             BufferedReader in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
             String message = in.readLine();
+
+            // Assert Pseudo deja utilisé
+            for(int i=0; i<=Serveur.id; i++){
+                if(Serveur.clients[i] == message){
+                    System.out.println("Pseudo deja utilisé, veuillez en choisir un autre.");
+                    recevoirPseudo();
+                    break;
+                }
+            }
+
+            // Assert Trop d'utilisateurs
+            if(Serveur.id +1 > 20){
+                System.out.println("Nombre maximum de clients atteint.");
+                comm.close();
+            }
+
+            // Enregistrer le pseudo
+            Serveur.clients[Serveur.id] = message;
+            Serveur.id++;
             return message;
     }
 
