@@ -1,4 +1,3 @@
-public class Serveur {
-     Thread thread = new Thread();
-
+public class Serveur{
+     
 }
