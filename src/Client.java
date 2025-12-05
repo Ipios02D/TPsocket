@@ -18,5 +18,4 @@ public class Client {
             System.out.println("Erreur de communication avec le serveur : " + e.getMessage());
         }
     }
-
 }
