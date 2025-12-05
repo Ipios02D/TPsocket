@@ -25,7 +25,7 @@ public class Procedurecom extends Thread  {
 
             // Assert Pseudo deja utilisé
             for(int i=0; i<=Serveur.id; i++){
-                if(Serveur.clients[i] == message){
+                if(Serveur.clients[i].equals(message)){
                     System.out.println("Pseudo deja utilisé, veuillez en choisir un autre.");
                     recevoirPseudo();
                     break;
