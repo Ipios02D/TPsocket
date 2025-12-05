@@ -3,6 +3,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Serveur{
+
+    public static String[] clients = new String[20];
+    public static int id = 0;
     static  Procedurecom[] procedures = new Procedurecom[20];
     private static int nbclient = 0;
     public static boolean messageAttente;
