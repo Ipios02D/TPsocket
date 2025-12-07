@@ -14,10 +14,28 @@ public class Client {
             socket.connect(new InetSocketAddress(serverAddress, 7777), 5000);
             System.out.println("Connecte au serveur " + serverAddress + " sur le port 7777");
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println("Bonjour serveur, je suis un client.");
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String response = in.readLine();
-            System.out.println("Reponse du serveur : " + response);
+            
+            // Envoyer le pseudo
+            System.out.println("Entrez votre pseudo:");
+            BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+            String pseudo = userInput.readLine();
+            out.println(pseudo);
+
+            while (true) {
+                // Envoyer un message
+                System.out.println("Entrez votre message:");
+                String message = userInput.readLine();
+                if (message.equals("!exit")) {
+                    System.out.println("Fermeture de la connexion.");
+                    break;
+                }
+                out.println(message);
+                
+                // Recevoir la réponse
+                String response = in.readLine();
+                System.out.println("Reponse du serveur : " + response);
+            }
             out.close();
             in.close();
             socket.close();

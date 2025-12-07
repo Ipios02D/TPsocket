@@ -8,24 +8,28 @@ public class Procedurecom extends Thread  {
     final Socket comm;
     public String pseudo;
     public String messageRecu;
+    private BufferedReader in;
+    private PrintWriter out;
 
-    public Procedurecom (Socket s) {
+
+    public Procedurecom (Socket s) throws IOException {
         this.comm = s;
+        this.in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
+        this.out = new PrintWriter(comm.getOutputStream(), true);
+
     }
 
     public String envoyer(String message, String pseudo) throws IOException {
-            PrintWriter out = new PrintWriter(comm.getOutputStream(), true);
             out.println(pseudo + ": " + message);
             return "Message envoyé";
     }
 
     public String recevoirPseudo() throws IOException {
-            BufferedReader in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
             String message = in.readLine();
 
             // Assert Pseudo deja utilisé
             for(int i=0; i<=Serveur.id; i++){
-                if(Serveur.clients[i].equals(message)){
+                if(Serveur.clients[i] != null && Serveur.clients[i].equals(message)){
                     System.out.println("Pseudo deja utilisé, veuillez en choisir un autre.");
                     recevoirPseudo();
                     break;
@@ -45,7 +49,6 @@ public class Procedurecom extends Thread  {
     }
 
     public String recevoirMessage() throws IOException {
-            BufferedReader in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
             String message = in.readLine();
             Serveur.messageAttente = true;
             return message;
@@ -54,19 +57,27 @@ public class Procedurecom extends Thread  {
 
     @Override
     public void run() {
-        try (comm;) {
+        try (comm) {
+
             System.out.println("Communication avec le client " + comm.getInetAddress());
             this.pseudo = recevoirPseudo();
             System.out.println("Pseudo: " + pseudo);
+
             while (true) {
+
                 messageRecu = recevoirMessage();
-                if (messageRecu.equals("!exit")) {
-                    System.out.println("Client " + pseudo + " deconnecte.");
-                    break;
-                }
+
+                if (messageRecu == null) break;
+                if (messageRecu.equals("!exit")) break;
+
                 System.out.println("Message de " + pseudo + ": " + messageRecu);
-                envoyer("Message reçu: " + messageRecu, pseudo);
+                Serveur.dernierEmetteur = this;
+                Serveur.messageAttente = true;
+
+                new Serveur().partager(Serveur.procedures, this);
+                Serveur.messageAttente = false;
             }
+
         } catch (IOException e) {
             System.out.println("Erreur de communication : " + e.getMessage());
         }
