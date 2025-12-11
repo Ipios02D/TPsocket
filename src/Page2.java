@@ -1,5 +1,3 @@
-package tp1;
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -77,3 +75,4 @@ public class Page2 extends Panel implements ActionListener {
         messageArea.setCaretPosition(messageArea.getText().length());
     }
 }
+
