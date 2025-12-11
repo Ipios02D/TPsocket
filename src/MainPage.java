@@ -1,5 +1,3 @@
-package tp1;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Frame;
@@ -50,3 +48,4 @@ public class MainPage {
 	    }
 	
 }
+
