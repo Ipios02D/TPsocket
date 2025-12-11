@@ -16,7 +16,6 @@ public class Procedurecom extends Thread  {
         this.comm = s;
         this.in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
         this.out = new PrintWriter(comm.getOutputStream(), true);
-
     }
 
     public String envoyer(String message, String pseudo) throws IOException {
@@ -25,11 +24,11 @@ public class Procedurecom extends Thread  {
     }
 
     public String recevoirPseudo() throws IOException {
-            String message = in.readLine();
+            pseudo = in.readLine();
 
             // Assert Pseudo deja utilisé
             for(int i=0; i<=Serveur.id; i++){
-                if(Serveur.clients[i] != null && Serveur.clients[i].equals(message)){
+                if(Serveur.clients[i] != null && Serveur.clients[i].equals(pseudo)){
                     System.out.println("Pseudo deja utilisé, veuillez en choisir un autre.");
                     recevoirPseudo();
                     break;
@@ -43,14 +42,13 @@ public class Procedurecom extends Thread  {
             }
 
             // Enregistrer le pseudo
-            Serveur.clients[Serveur.id] = message;
+            Serveur.clients[Serveur.id] = pseudo;
             Serveur.id++;
-            return message;
+            return pseudo;
     }
 
     public String recevoirMessage() throws IOException {
             String message = in.readLine();
-            Serveur.messageAttente = true;
             return message;
     }
 
@@ -67,15 +65,11 @@ public class Procedurecom extends Thread  {
 
                 messageRecu = recevoirMessage();
 
-                if (messageRecu == null) break;
-                if (messageRecu.equals("!exit")) break;
+                if (messageRecu.equals("!exit") || messageRecu == null) break;
 
                 System.out.println("Message de " + pseudo + ": " + messageRecu);
-                Serveur.dernierEmetteur = this;
-                Serveur.messageAttente = true;
 
                 new Serveur().partager(Serveur.procedures, this);
-                Serveur.messageAttente = false;
             }
 
         } catch (IOException e) {

@@ -8,8 +8,6 @@ public class Serveur{
     public static int id = 0;
     static  Procedurecom[] procedures = new Procedurecom[20];
     private static int nbclient = 0;
-    public static boolean messageAttente = false;
-    public static Procedurecom dernierEmetteur;
 
     public void partager(Procedurecom[] procedures, Procedurecom expediteur) {
         for (Procedurecom procedure : procedures) {
