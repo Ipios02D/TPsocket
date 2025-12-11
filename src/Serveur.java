@@ -11,11 +11,8 @@ public class Serveur{
 
     public static void partager(Procedurecom[] procedures, Procedurecom expediteur) {
         for (Procedurecom procedure : procedures) {
-            try {
-                if (procedure != null)
-                    procedure.envoyer(expediteur.messageRecu, expediteur.pseudo);
-            } catch (IOException e) {
-                System.out.println("Erreur lors du partage du message : " + e.getMessage());
+            if (procedure != null && procedure != expediteur) {
+                procedure.out.println(expediteur.pseudo + ": " + expediteur.messageRecu);
             }
         }
     }

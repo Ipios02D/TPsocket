@@ -11,18 +11,14 @@ public class Procedurecom extends Thread  {
     final BufferedReader in;
     final PrintWriter out;
 
-
+    // Constructeur
     public Procedurecom (Socket s) throws IOException {
         this.comm = s;
         this.in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
         this.out = new PrintWriter(comm.getOutputStream(), true);
     }
 
-    public String envoyer(String message, String pseudo) throws IOException {
-            out.println(pseudo + ": " + message);
-            return "Message envoyé";
-    }
-
+    // Reception du pseudo et verification de sa validité
     public String recevoirPseudo() throws IOException {
             pseudo = in.readLine();
 
@@ -47,28 +43,27 @@ public class Procedurecom extends Thread  {
             return pseudo;
     }
 
-    public String recevoirMessage() throws IOException {
-            String message = in.readLine();
-            return message;
-    }
-
-
     @Override
     public void run() {
         try (comm) {
 
             System.out.println("Communication avec le client " + comm.getInetAddress());
+
+            // Recuperation du pseudo
             this.pseudo = recevoirPseudo();
             System.out.println("Pseudo: " + pseudo);
 
             while (true) {
+                // Reception du message
+                messageRecu = in.readLine();
 
-                messageRecu = recevoirMessage();
-
+                // Gestion de la deconnexion
                 if (messageRecu.equals("!exit") || messageRecu == null) break;
 
+                // Affichage du message dans le terminal serveur
                 System.out.println("Message de " + pseudo + ": " + messageRecu);
 
+                // Partage du message avec les autres clients
                 Serveur.partager(Serveur.procedures, this);
             }
 
