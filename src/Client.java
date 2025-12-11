@@ -24,6 +24,7 @@ public class Client {
             String pseudo = scanner.nextLine();
             out.println(pseudo);
 
+            // Thread pour lire les messages du serveur
             new Thread() {
                 @Override
                 public void run() {
@@ -42,12 +43,15 @@ public class Client {
                 // Envoyer un message
                 System.out.println("Entrez votre message:");
                 String message = scanner.nextLine();
+
+                // Gestion de la deconnexion
                 if (message.equals("!exit")) {
                     System.out.println("Fermeture de la connexion.");
                     break;
                 }
                 out.println(message);
             }
+            
             out.close();
             in.close();
             socket.close();
