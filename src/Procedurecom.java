@@ -8,8 +8,8 @@ public class Procedurecom extends Thread  {
     final Socket comm;
     public String pseudo;
     public String messageRecu;
-    private BufferedReader in;
-    private PrintWriter out;
+    final BufferedReader in;
+    final PrintWriter out;
 
 
     public Procedurecom (Socket s) throws IOException {

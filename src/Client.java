@@ -22,6 +22,20 @@ public class Client {
             String pseudo = userInput.readLine();
             out.println(pseudo);
 
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        String serverMessage;
+                        while ((serverMessage = in.readLine()) != null) {
+                            System.out.println(serverMessage);
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Erreur de lecture du serveur : " + e.getMessage());
+                    }
+                }
+            }.start();
+
             while (true) {
                 // Envoyer un message
                 System.out.println("Entrez votre message:");
@@ -31,10 +45,6 @@ public class Client {
                     break;
                 }
                 out.println(message);
-                
-                // Recevoir la réponse
-                String response = in.readLine();
-                System.out.println("Reponse du serveur : " + response);
             }
             out.close();
             in.close();
