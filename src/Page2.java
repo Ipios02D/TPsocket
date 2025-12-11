@@ -4,7 +4,7 @@ import java.awt.event.*;
 
 public class Page2 extends Panel implements ActionListener {
     private TextArea messageArea;
-    private TextField inputField;
+    public static TextField inputField;
     private Button sendButton;
     private Button outButton;
 

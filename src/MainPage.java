@@ -22,16 +22,6 @@ public class MainPage {
 	        container.add(page1, "page1");
 	        container.add(page2, "page2");
 
-	        page2.setMessageListener(new Page2.MessageListener() {
-	            @Override
-	            public void onMessageSent(String message) {
-	            	String formatted = "Moi: " + message;
-	                System.out.println("Message envoyé : " + message);
-
-	                page2.displayMessage(formatted);
-	            }
-	        });
-
 	        cards.show(container, "page1");
 
 	        frame.add(container, BorderLayout.CENTER);

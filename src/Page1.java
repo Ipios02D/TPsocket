@@ -4,7 +4,7 @@ import java.awt.event.*;
 public class Page1 extends Panel implements ActionListener {
 	
     private Label prompt;
-    private TextField pseudoField;
+    public static TextField pseudoField;
     private Button enterButton;
 
     private CardLayout cards;

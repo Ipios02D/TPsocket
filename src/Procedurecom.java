@@ -11,16 +11,20 @@ public class Procedurecom extends Thread  {
     final BufferedReader in;
     final PrintWriter out;
 
-    // Constructeur
+
     public Procedurecom (Socket s) throws IOException {
         this.comm = s;
         this.in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
         this.out = new PrintWriter(comm.getOutputStream(), true);
     }
 
-    // Reception du pseudo et verification de sa validité
+    public String envoyer(String message, String pseudo) throws IOException {
+            out.println(pseudo + ": " + message);
+            return "Message envoyé";
+    }
+
     public String recevoirPseudo() throws IOException {
-            pseudo = in.readLine();
+            pseudo = Page1.pseudoField.getText();
 
             // Assert Pseudo deja utilisé
             for(int i=0; i<=Serveur.id; i++){
@@ -43,27 +47,28 @@ public class Procedurecom extends Thread  {
             return pseudo;
     }
 
+    public String recevoirMessage() throws IOException {
+            String message = Page2.inputField.getText();
+            return message;
+    }
+
+
     @Override
     public void run() {
         try (comm) {
 
             System.out.println("Communication avec le client " + comm.getInetAddress());
-
-            // Recuperation du pseudo
             this.pseudo = recevoirPseudo();
             System.out.println("Pseudo: " + pseudo);
 
             while (true) {
-                // Reception du message
-                messageRecu = in.readLine();
 
-                // Gestion de la deconnexion
+                messageRecu = recevoirMessage();
+
                 if (messageRecu.equals("!exit") || messageRecu == null) break;
 
-                // Affichage du message dans le terminal serveur
                 System.out.println("Message de " + pseudo + ": " + messageRecu);
 
-                // Partage du message avec les autres clients
                 Serveur.partager(Serveur.procedures, this);
             }
 
