@@ -9,7 +9,7 @@ public class Serveur{
     static  Procedurecom[] procedures = new Procedurecom[20];
     private static int nbclient = 0;
 
-    public void partager(Procedurecom[] procedures, Procedurecom expediteur) {
+    public static void partager(Procedurecom[] procedures, Procedurecom expediteur) {
         for (Procedurecom procedure : procedures) {
             try {
                 if (procedure != null)

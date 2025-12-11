@@ -69,7 +69,7 @@ public class Procedurecom extends Thread  {
 
                 System.out.println("Message de " + pseudo + ": " + messageRecu);
 
-                new Serveur().partager(Serveur.procedures, this);
+                Serveur.partager(Serveur.procedures, this);
             }
 
         } catch (IOException e) {
