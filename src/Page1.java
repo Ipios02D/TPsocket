@@ -1,8 +1,5 @@
-package tp1;
-
 import java.awt.*;
 import java.awt.event.*;
-
 
 public class Page1 extends Panel implements ActionListener {
 	
@@ -55,3 +52,4 @@ public class Page1 extends Panel implements ActionListener {
     
   
 }
+
