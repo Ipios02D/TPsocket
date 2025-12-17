@@ -11,20 +11,17 @@ public class Procedurecom extends Thread  {
     final BufferedReader in;
     final PrintWriter out;
 
-
+    // Constructeur
     public Procedurecom (Socket s) throws IOException {
         this.comm = s;
         this.in = new BufferedReader(new InputStreamReader(comm.getInputStream()));
         this.out = new PrintWriter(comm.getOutputStream(), true);
     }
 
-    public String envoyer(String message, String pseudo) throws IOException {
-            out.println(pseudo + ": " + message);
-            return "Message envoyé";
-    }
-
+    // Reception du pseudo et verification de sa validité
     public String recevoirPseudo() throws IOException {
-            pseudo = Page1.pseudoField.getText();
+
+            pseudo = in.readLine();
 
             // Assert Pseudo deja utilisé
             for(int i=0; i<=Serveur.id; i++){
@@ -47,28 +44,38 @@ public class Procedurecom extends Thread  {
             return pseudo;
     }
 
-    public String recevoirMessage() throws IOException {
-            String message = Page2.inputField.getText();
-            return message;
-    }
-
 
     @Override
     public void run() {
         try (comm) {
 
             System.out.println("Communication avec le client " + comm.getInetAddress());
+
+            // Recuperation du pseudo
             this.pseudo = recevoirPseudo();
             System.out.println("Pseudo: " + pseudo);
 
             while (true) {
 
-                messageRecu = recevoirMessage();
+                // Reception du message
+                messageRecu = in.readLine();
 
-                if (messageRecu.equals("!exit") || messageRecu == null) break;
+                // Gestion de la deconnexion
+                if (messageRecu.equals("!exit") || messageRecu == null){ 
+                    // Retirer le pseudo de la liste des clients
+                    for(int i=0; i<Serveur.id; i++){
+                        if(Serveur.clients[i] != null && Serveur.clients[i].equals(pseudo)){
+                            Serveur.clients[i] = null;
+                            break;
+                        }
+                    }
+                    break;
+                }
 
-                System.out.println("Message de " + pseudo + ": " + messageRecu);
+                // Affichage du message dans le terminal serveur
+                System.out.println("Message de " + pseudo + ":" + messageRecu+".");
 
+                // Partage du message avec les autres clients
                 Serveur.partager(Serveur.procedures, this);
             }
 

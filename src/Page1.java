@@ -1,5 +1,12 @@
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.FlowLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Page1 extends Panel implements ActionListener {
 	
@@ -10,6 +17,11 @@ public class Page1 extends Panel implements ActionListener {
     private CardLayout cards;
     private Panel container;
     private Page2 page2;
+
+    public interface MessageListener {
+        void onMessageSent(String message);
+    }
+    private MessageListener messageListener;
 
     public Page1(CardLayout cards, Panel container, Page2 page2) {
         this.cards = cards;
@@ -35,6 +47,10 @@ public class Page1 extends Panel implements ActionListener {
         add(center, BorderLayout.CENTER);
     }
 
+    public void setMessageListener(MessageListener listener) {
+        this.messageListener = listener;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == enterButton) {
@@ -43,7 +59,9 @@ public class Page1 extends Panel implements ActionListener {
                 System.out.println("Pseudo vide : entrez un pseudo.");
                 return;
             }
-
+            messageListener.onMessageSent(pseudo);
+            pseudoField.setText("");
+            page2.clearMessageArea();
             cards.show(container, "page2");
 
             page2.displayMessage("=== " + pseudo + " a rejoint la discussion ===");

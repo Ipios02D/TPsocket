@@ -1,5 +1,12 @@
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.FlowLayout;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 public class Page2 extends Panel implements ActionListener {
@@ -53,8 +60,8 @@ public class Page2 extends Panel implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object src = e.getSource();
-        if (src == sendButton) {
+        
+        if (e.getSource() == sendButton) {
             String text = inputField.getText();
             if (text != null && text.trim().length() > 0) {
                 if (messageListener != null) {
@@ -63,7 +70,8 @@ public class Page2 extends Panel implements ActionListener {
                 
                 inputField.setText("");
             }
-        } else if (src == outButton) {
+        } else if (e.getSource() == outButton) {
+            messageListener.onMessageSent("!exit");
             cards.show(container, "page1");
         }
     }
@@ -73,6 +81,10 @@ public class Page2 extends Panel implements ActionListener {
         if (msg == null) return;
         messageArea.append(msg + "\n");
         messageArea.setCaretPosition(messageArea.getText().length());
+    }
+
+    public void clearMessageArea() {
+        messageArea.setText("");
     }
 }
 

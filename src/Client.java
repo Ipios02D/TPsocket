@@ -1,3 +1,9 @@
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Frame;
+import java.awt.Panel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,23 +12,12 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Frame;
-import java.awt.Panel;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 
 public class Client {
+    static boolean end = true;
     public static void main(String[] args) {
-        try (Socket socket = new Socket()) {
-            InetAddress serverAddress = InetAddress.getByName("localhost");
-            socket.connect(new InetSocketAddress(serverAddress, 7777), 5000);
-            System.out.println("Connecte au serveur " + serverAddress + " sur le port 7777");
-
-             Frame frame = new Frame("DevWeb TP1 Chat");
+        Frame frame = new Frame("DevWeb TP1 Chat");
 	        frame.setSize(600, 420);
 	        frame.setLayout(new BorderLayout());
 	        CardLayout cards = new CardLayout();
@@ -35,14 +30,42 @@ public class Client {
 	        
 	        container.add(page1, "page1");
 	        container.add(page2, "page2");
+        
+        do{
+        try (Socket socket = new Socket()) {
+            InetAddress serverAddress = InetAddress.getByName("localhost");
+            socket.connect(new InetSocketAddress(serverAddress, 7777), 5000);
+            System.out.println("Connecte au serveur " + serverAddress + " sur le port 7777");
+
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            
+
+            page1.setMessageListener(new Page1.MessageListener() {
+	            @Override
+	            public void onMessageSent(String pseudo) {
+                    out.println(pseudo);
+	            }
+	        });
 
 	        page2.setMessageListener(new Page2.MessageListener() {
 	            @Override
 	            public void onMessageSent(String message) {
+                    out.println(message);
 	            	String formatted = "Moi: " + message;
 	                System.out.println("Message envoyé : " + message);
 
 	                page2.displayMessage(formatted);
+
+                    if ("!exit".equals(message)) {
+	                    System.out.println("Fermeture de la connexion.");
+	                    try {
+	                        socket.close();
+	                    } catch (IOException ex) {
+	                        System.out.println("Erreur lors de la fermeture du socket : " + ex.getMessage());
+	                    }
+	                }
 	            }
 	        });
 
@@ -53,6 +76,12 @@ public class Client {
 
 	        frame.addWindowListener(new WindowAdapter() {
 	            public void windowClosing(WindowEvent e) {
+                    try {
+                        if (!socket.isClosed()) socket.close();
+                    } catch (IOException ex) {
+                        System.out.println("Erreur fermeture socket: " + ex.getMessage());
+                    }
+                    end = false;
 	                frame.dispose();
 	                System.exit(0);
 	            }
@@ -60,14 +89,6 @@ public class Client {
 
 	        frame.setVisible(true);
             
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            Scanner scanner = new Scanner(System.in);
-            
-            // Envoyer le pseudo
-            
-            String pseudo = Page1.pseudoField.getText();
-            out.println(pseudo);
 
             // Thread pour lire les messages du serveur
             new Thread() {
@@ -84,27 +105,22 @@ public class Client {
                 }
             }.start();
 
-            while (true) {
-                // Envoyer un message
-                String message = Page2.inputField.getText();
 
-                // Gestion de la deconnexion
-                if (message.equals("!exit")) {
-                    System.out.println("Fermeture de la connexion.");
+            // Maintenir l'application ouverte tant que le socket n'est pas fermé
+            while (!socket.isClosed()) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
-                out.println(message);
             }
-            
-            out.close();
-            in.close();
-            socket.close();
-            scanner.close();
 
         } catch (UnknownHostException e) {
             System.out.println("Adresse du serveur inconnue : " + e.getMessage());
         } catch (IOException e) {
             System.out.println("Erreur de communication avec le serveur : " + e.getMessage());
         }
+        } while(end);
     }
 }
